@@ -19,7 +19,14 @@ const routes: RouteRecordRaw = {
       component: () => import('@/views/demos/table/index.vue'),
       meta: {
         title: '通用表格',
-        icon: 'i-tabler:table',
+      },
+    },
+    {
+      path: 'apiTable',
+      name: 'mockTableDemo',
+      component: () => import('@/views/demos/table/index-api-demo.vue'),
+      meta: {
+        title: 'mock测试',
       },
     },
   ],

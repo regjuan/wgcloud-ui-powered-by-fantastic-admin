@@ -1,9 +1,8 @@
 <template>
   <div class="absolute-container">
-    <FaPageHeader title="通用表格 - 高度自适应" class="mb-0" />
+    <FaPageHeader title="通用表格 - API请求演示" class="mb-0" />
     <FaPageMain class="flex-1 overflow-auto" main-class="flex-1 flex flex-col overflow-auto">
-      <CommonTable :list="listData" :options="tableOptions" height="100%">
-        <!-- 操作列使用插槽 -->
+      <CommonTable :list="listData" :options="tableOptions" :loading="loading" height="100%">
         <template #action="{ row }">
           <div class="flex gap-2">
             <FaButton type="text" @click="handleEdit(row)">编辑</FaButton>
@@ -16,25 +15,17 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue'
+import { toast } from 'vue-sonner'
 import CommonTable from '@/components/CommonTable/index.vue'
+import tableApi from '@/api/modules/table'
 
 defineOptions({
-  name: 'demosTable',
+  name: 'mockTableDemo',
 })
 
-const listData = ref([
-  { id: 1, name: '张三', age: 30, createDate: '2023-01-15T12:30:00' },
-  { id: 2, name: '李四', age: 25, createDate: '2023-02-20T18:00:00' },
-  { id: 3, name: '王五', age: 42, createDate: '2023-03-10T09:15:00' },
-  { id: 4, name: '赵六', age: 35, createDate: '2023-04-01T10:00:00' },
-  { id: 5, name: '孙七', age: 28, createDate: '2023-05-05T14:20:00' },
-  { id: 6, name: '周八', age: 50, createDate: '2023-06-11T16:45:00' },
-  { id: 7, name: '吴九', age: 22, createDate: '2023-07-21T11:05:00' },
-  { id: 8, name: '郑十', age: 31, createDate: '2023-08-30T22:50:00' },
-  { id: 9, name: '冯十一', age: 38, createDate: '2023-09-18T08:30:00' },
-  { id: 10, name: '陈十二', age: 45, createDate: '2023-10-25T19:00:00' },
-]);
+const listData = ref([])
+const loading = ref(false)
 
 const tableOptions = ref([
   { label: '姓名', prop: 'name' },
@@ -48,12 +39,39 @@ const tableOptions = ref([
   { label: '操作', prop: 'action', width: '150' }
 ]);
 
+async function fetchData() {
+  try {
+    loading.value = true
+    const res = await tableApi.list()
+    listData.value = res.data.list
+  }
+  catch (error) {
+    toast.error('数据加载失败')
+    console.error(error)
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchData()
+})
+
 const handleEdit = (row) => {
   alert(`正在编辑 [${row.name}]`)
 }
 
-const handleDelete = (row) => {
-  alert(`正在删除 [${row.name}]`)
+const handleDelete = async (row) => {
+  try {
+    const res = await tableApi.delete({ id: row.id })
+    toast.success(`删除 [${row.name}] 成功`)
+    console.log(res)
+  }
+  catch (error) {
+    toast.error(`删除 [${row.name}] 失败`)
+    console.error(error)
+  }
 }
 </script>
 
