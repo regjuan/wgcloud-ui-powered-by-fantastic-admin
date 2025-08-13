@@ -4,6 +4,7 @@ import generatedRoutes from 'virtual:generated-pages'
 import { setupLayouts } from 'virtual:meta-layouts'
 import MultilevelMenuExample from './modules/multilevel.menu.example'
 import Demos from "@/router/modules/demos.ts";
+import Tag from "@/router/modules/tag.ts";
 
 // 固定路由（默认路由）
 const constantRoutes: RouteRecordRaw[] = [
@@ -67,6 +68,7 @@ const asyncRoutes: Route.recordMainRaw[] = [
     children: [
       MultilevelMenuExample,
       Demos,
+      Tag
     ],
   },
 ]

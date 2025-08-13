@@ -71,7 +71,7 @@ api.interceptors.response.use(
      * 请求出错时 error 会返回错误信息
      */
     if (typeof response.data === 'object') {
-      if (response.data.status === 1) {
+      if (response.data.status === 1 || response.data.code === 200) {
         if (response.data.error !== '') {
           toast.warning('Warning', {
             description: response.data.error,
