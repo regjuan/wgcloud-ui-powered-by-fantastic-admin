@@ -6,6 +6,7 @@ import MultilevelMenuExample from './modules/multilevel.menu.example'
 import Demos from "@/router/modules/demos.ts";
 import Tag from "@/router/modules/tag.ts";
 import Command from "@/router/modules/command.ts";
+import Playbook from "@/router/modules/playbook.ts";
 
 // 固定路由（默认路由）
 const constantRoutes: RouteRecordRaw[] = [
@@ -70,7 +71,8 @@ const asyncRoutes: Route.recordMainRaw[] = [
       MultilevelMenuExample,
       Demos,
       Tag,
-      Command
+      Command,
+      Playbook
     ],
   },
 ]
