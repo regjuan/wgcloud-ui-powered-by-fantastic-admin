@@ -72,7 +72,7 @@ api.interceptors.response.use(
      */
     if (typeof response.data === 'object') {
       if (response.data.status === 1 || response.data.code === 200) {
-        if (response.data.error !== '') {
+        if (response.data.error) {
           toast.warning('Warning', {
             description: response.data.error,
           })
