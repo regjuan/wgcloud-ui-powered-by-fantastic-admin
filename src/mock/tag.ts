@@ -5,7 +5,7 @@ const tags = Array.from({ length: 38 }).map(() => ({
   id: faker.string.uuid(),
   tagName: faker.commerce.department(),
   tagDesc: faker.lorem.sentence(),
-  tagColor: faker.internet.color(),
+  tagColor: faker.color.rgb(),
   createTime: faker.date.past().toISOString().split('T')[0],
 }))
 
@@ -22,17 +22,11 @@ export default [
       const pageEnd = page * pageSize
       const paginatedTags = filteredTags.slice(pageStart, pageEnd)
       return {
-        status: 1,
-        error: '',
+        code: 200,
+        message: 'Success',
         data: {
-          page: {
-            list: paginatedTags,
-            total: filteredTags.length,
-            pages: Math.ceil(filteredTags.length / pageSize),
-          },
-          tag: {
-            tagName,
-          },
+          list: paginatedTags,
+          total: filteredTags.length,
         },
       }
     },
@@ -42,28 +36,29 @@ export default [
     method: 'post',
     response: ({ body }) => {
       const { id, tagName, tagDesc, tagColor } = body
+      let savedTag
       if (id) {
         // 更新
         const index = tags.findIndex(tag => tag.id === id)
         if (index !== -1) {
           tags[index] = { ...tags[index], tagName, tagDesc, tagColor }
+          savedTag = tags[index]
         }
       } else {
         // 新增
-        tags.unshift({
+        savedTag = {
           id: faker.string.uuid(),
           tagName,
           tagDesc,
           tagColor,
           createTime: new Date().toISOString().split('T')[0],
-        })
+        }
+        tags.unshift(savedTag)
       }
       return {
-        status: 1,
-        error: '',
-        data: {
-          result: 'success',
-        },
+        code: 200,
+        message: id ? 'Tag updated successfully' : 'Tag created successfully',
+        data: savedTag,
       }
     },
   },
@@ -79,11 +74,9 @@ export default [
         }
       }
       return {
-        status: 1,
-        error: '',
-        data: {
-          result: 'success',
-        },
+        code: 200,
+        message: 'Tags deleted successfully',
+        data: { success: true },
       }
     },
   },

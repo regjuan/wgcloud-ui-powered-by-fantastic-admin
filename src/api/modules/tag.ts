@@ -1,27 +1,16 @@
-import api from '../index'
+import api from '@/api/index'
 
-interface Tag {
-  id?: string
-  tagName: string
-  tagDesc?: string
-  tagColor?: string
-  createTime?: string
+// 获取标签列表
+export function getTagList(params?: any) {
+  return api.post('/tag/list', params)
 }
 
-interface TagListParams {
-  tagName?: string
-  page: number
-  pageSize: number
-}
-
-export function getTagList(data: TagListParams) {
-  return api.post('/tag/list', data)
-}
-
-export function saveTag(data: Tag) {
+// 保存标签
+export function saveTag(data: any) {
   return api.post('/tag/save', data)
 }
 
+// 删除标签
 export function deleteTag(id: string) {
   return api.delete(`/tag/del?id=${id}`)
 }

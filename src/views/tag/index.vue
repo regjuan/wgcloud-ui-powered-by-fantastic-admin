@@ -99,8 +99,8 @@ async function loadData() {
       page: page.value,
       pageSize: pageSize.value,
     })
-    dataList.value = res.data.page.list
-    total.value = res.data.page.total
+    dataList.value = res.data.list
+    total.value = res.data.total
   } finally {
     dataLoading.value = false
   }
