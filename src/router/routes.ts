@@ -2,11 +2,12 @@ import type { Route } from '#/global'
 import type { RouteRecordRaw } from 'vue-router'
 import generatedRoutes from 'virtual:generated-pages'
 import { setupLayouts } from 'virtual:meta-layouts'
+import Command from '@/router/modules/command.ts'
+import Demos from '@/router/modules/demos.ts'
+import Host from '@/router/modules/host.ts'
+import Playbook from '@/router/modules/playbook.ts'
+import Tag from '@/router/modules/tag.ts'
 import MultilevelMenuExample from './modules/multilevel.menu.example'
-import Demos from "@/router/modules/demos.ts";
-import Tag from "@/router/modules/tag.ts";
-import Command from "@/router/modules/command.ts";
-import Playbook from "@/router/modules/playbook.ts";
 
 // 固定路由（默认路由）
 const constantRoutes: RouteRecordRaw[] = [
@@ -72,7 +73,9 @@ const asyncRoutes: Route.recordMainRaw[] = [
       Demos,
       Tag,
       Command,
-      Playbook
+      Playbook,
+      Host,
+
     ],
   },
 ]

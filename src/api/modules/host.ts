@@ -1,0 +1,28 @@
+import api from '@/api/index'
+
+// 获取主机列表
+export function getHostList(params: any) {
+  return api.get('/dash/systemInfoList', { params })
+}
+
+// 删除主机
+export function deleteHost(id: string) {
+  const params = { id }
+  return api.post('/dash/del', params)
+}
+
+// 保存主机备注
+export function saveHostRemark(data: any) {
+  return api.post('/host/save', data)
+}
+
+// 获取主机详情
+export function getHostDetail(id: string) {
+  const params = { id }
+  return api.get('/dash/detail', { params })
+}
+
+// 获取主机图表数据
+export function getHostChartData(params: any) {
+  return api.get('/dash/chart', { params })
+}
