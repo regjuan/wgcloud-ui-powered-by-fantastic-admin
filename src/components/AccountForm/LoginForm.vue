@@ -2,6 +2,7 @@
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
 import * as z from 'zod'
+import md5 from 'crypto-js/md5'
 import { FormControl, FormField, FormItem, FormMessage } from '@/ui/shadcn/ui/form'
 
 defineOptions({
@@ -40,7 +41,10 @@ const form = useForm({
 })
 const onSubmit = form.handleSubmit((values) => {
   loading.value = true
-  userStore.login(values).then(() => {
+  userStore.login({
+    account: values.account,
+    password: md5(values.password).toString(),
+  }).then(() => {
     if (values.remember) {
       localStorage.setItem('login_account', values.account)
     }

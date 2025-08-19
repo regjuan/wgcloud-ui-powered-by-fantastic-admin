@@ -27,12 +27,10 @@ export const useUserStore = defineStore(
       password: string
     }) {
       const res = await apiUser.login(data)
-      localStorage.setItem('account', res.data.account)
-      localStorage.setItem('token', res.data.token)
-      localStorage.setItem('avatar', res.data.avatar)
-      account.value = res.data.account
-      token.value = res.data.token
-      avatar.value = res.data.avatar
+      localStorage.setItem('account', data.account)
+      localStorage.setItem('token', res.token)
+      account.value = data.account
+      token.value = res.token
     }
 
     // 手动登出

@@ -27,7 +27,7 @@ api.interceptors.request.use(
     // 设置请求头
     if (request.headers) {
       if (userStore.isLogin) {
-        request.headers.Token = userStore.token
+        request.headers.Authorization = `Bearer ${userStore.token}`
       }
     }
     // 是否将 POST 请求参数进行字符串化处理
@@ -71,7 +71,7 @@ api.interceptors.response.use(
      * 请求出错时 error 会返回错误信息
      */
     if (typeof response.data === 'object') {
-      if (response.data.status === 1 || response.data.code === 200) {
+      if (response.data.status === 1 || response.data.code === 200 || response.data.token) {
         if (response.data.error) {
           toast.warning('Warning', {
             description: response.data.error,
