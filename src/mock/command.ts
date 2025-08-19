@@ -28,7 +28,7 @@ ${faker.hacker.phrase()}`,
 export default [
   // Get command list
   {
-    url: '/api/command',
+    url: '/command',
     method: 'get',
     response: ({ query }) => {
       const { cmdName, tags, page = 1, pageSize = 10 } = query
@@ -60,7 +60,7 @@ export default [
   },
   // Get single command
   {
-    url: '/api/command/:id',
+    url: '/command/:id',
     method: 'get',
     response: ({ params }) => {
       const command = commands.find(cmd => cmd.id === params.id)
@@ -82,7 +82,7 @@ export default [
   },
   // Create command
   {
-    url: '/api/command',
+    url: '/command',
     method: 'post',
     response: ({ body }) => {
       const newCommand = {
@@ -101,7 +101,7 @@ export default [
   },
   // Update command
   {
-    url: '/api/command/:id',
+    url: '/command/:id',
     method: 'put',
     response: ({ params, body }) => {
       const index = commands.findIndex(cmd => cmd.id === params.id)
@@ -128,7 +128,7 @@ export default [
   },
   // Delete command
   {
-    url: '/api/command/:id',
+    url: '/command/:id',
     method: 'delete',
     response: ({ params }) => {
       const index = commands.findIndex(cmd => cmd.id === params.id)
@@ -151,7 +151,7 @@ export default [
   },
   // Execute command
   {
-    url: '/api/command/:id/execute',
+    url: '/command/:id/execute',
     method: 'post',
     response: () => {
       return {
@@ -165,7 +165,7 @@ export default [
   },
   // Get execution result
   {
-    url: '/api/command/execution/:executionId',
+    url: '/command/execution/:executionId',
     method: 'get',
     response: () => {
       const status = faker.helpers.arrayElement(['RUNNING', 'SUCCESS', 'FAILED'])

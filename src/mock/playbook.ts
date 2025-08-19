@@ -26,7 +26,7 @@ const playbooks = Array.from({ length: 15 }).map(() => {
 export default [
   // GET /playbook (List)
   {
-    url: '/api/playbook',
+    url: '/playbook',
     method: 'get',
     response: ({ query }) => {
       const { playbookName, page = 1, pageSize = 10 } = query
@@ -40,7 +40,7 @@ export default [
 
   // GET /playbook/{id} (Detail)
   {
-    url: '/api/playbook/:id',
+    url: '/playbook/:id',
     method: 'get',
     response: ({ params }) => {
       const playbook = playbooks.find(p => p.id === params.id)
@@ -53,7 +53,7 @@ export default [
 
   // POST /playbook (Create)
   {
-    url: '/api/playbook',
+    url: '/playbook',
     method: 'post',
     response: ({ body }) => {
       const newPlaybook = {
@@ -68,7 +68,7 @@ export default [
 
   // PUT /playbook/{id} (Update)
   {
-    url: '/api/playbook/:id',
+    url: '/playbook/:id',
     method: 'put',
     response: ({ params, body }) => {
       const index = playbooks.findIndex(p => p.id === params.id)
@@ -82,7 +82,7 @@ export default [
 
   // DELETE /playbook/{id}
   {
-    url: '/api/playbook/:id',
+    url: '/playbook/:id',
     method: 'delete',
     response: ({ params }) => {
       const index = playbooks.findIndex(p => p.id === params.id)

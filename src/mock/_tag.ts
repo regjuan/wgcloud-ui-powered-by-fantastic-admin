@@ -1,5 +1,5 @@
-import { faker } from '@faker-js/faker'
 import type { MockMethod } from 'vite-plugin-mock'
+import { faker } from '@faker-js/faker'
 
 const tags = Array.from({ length: 38 }).map(() => ({
   id: faker.string.uuid(),
@@ -44,7 +44,8 @@ export default [
           tags[index] = { ...tags[index], tagName, tagDesc, tagColor }
           savedTag = tags[index]
         }
-      } else {
+      }
+      else {
         // 新增
         savedTag = {
           id: faker.string.uuid(),

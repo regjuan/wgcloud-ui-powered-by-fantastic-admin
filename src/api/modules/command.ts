@@ -2,7 +2,7 @@ import api from '@/api/index'
 
 // 获取指令列表
 export function getCommandList(params: any) {
-  return api.get('/api/command', {
+  return api.get('/command', {
     params,
     retry: true, // 启用重试
   })
@@ -19,7 +19,7 @@ export function saveCommand(data: any) {
     return api.put(`/api/command/${data.id}`, data)
   }
   else {
-    return api.post('/api/command', data)
+    return api.post('/command', data)
   }
 }
 

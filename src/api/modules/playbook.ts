@@ -1,7 +1,7 @@
 import api from '@/api/index'
 
 export function getPlaybookList(params?: any) {
-  return api.get('/api/playbook', { params })
+  return api.get('/playbook', { params })
 }
 
 export function getPlaybookDetail(id: string) {
@@ -13,7 +13,7 @@ export function savePlaybook(data: any) {
     return api.put(`/api/playbook/${data.id}`, data)
   }
   else {
-    return api.post('/api/playbook', data)
+    return api.post('/playbook', data)
   }
 }
 
@@ -30,5 +30,5 @@ export function getPlaybookExecution(executionId: string) {
 }
 
 export function getPlaybookHistory(params?: any) {
-  return api.get('/api/playbook/history', { params })
+  return api.get('/playbook/history', { params })
 }
