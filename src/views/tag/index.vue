@@ -102,11 +102,11 @@ loadData()
               <FaInput v-model="searchForm.tagName" placeholder="请输入标签名称" clearable />
             </el-form-item>
             <el-form-item>
-              <div gap-2>
-                <FaButton type="primary" @click="handleSearch">
+              <div class="flex gap-2">
+                <FaButton type="primary" @click.prevent="handleSearch">
                   查询
                 </FaButton>
-                <FaButton @click="handleReset">
+                <FaButton @click.prevent="handleReset">
                   重置
                 </FaButton>
               </div>
