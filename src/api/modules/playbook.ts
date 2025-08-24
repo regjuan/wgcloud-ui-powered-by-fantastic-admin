@@ -1,16 +1,16 @@
 import api from '@/api/index'
 
 export function getPlaybookList(params?: any) {
-  return api.get('/playbook', { params })
+  return api.post('/playbook/list', params)
 }
 
 export function getPlaybookDetail(id: string) {
-  return api.get(`/api/playbook/${id}`)
+  return api.get(`/playbook/${id}`)
 }
 
 export function savePlaybook(data: any) {
   if (data.id) {
-    return api.put(`/api/playbook/${data.id}`, data)
+    return api.put(`/playbook/${data.id}`, data)
   }
   else {
     return api.post('/playbook', data)
@@ -18,7 +18,7 @@ export function savePlaybook(data: any) {
 }
 
 export function deletePlaybook(id: string) {
-  return api.delete(`/api/playbook/${id}`)
+  return api.delete(`/playbook/${id}`)
 }
 
 export function executePlaybook(id: string, data: any) {

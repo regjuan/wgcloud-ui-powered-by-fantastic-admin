@@ -24,17 +24,39 @@ const playbooks = Array.from({ length: 15 }).map(() => {
 })
 
 export default [
-  // GET /playbook (List)
+  // POST /playbook/list (List)
   {
-    url: '/playbook',
-    method: 'get',
-    response: ({ query }) => {
-      const { playbookName, page = 1, pageSize = 10 } = query
+    url: '/playbook/list',
+    method: 'post',
+    response: ({ body }) => {
+      const { playbookName, page = 1, pageSize = 10 } = body
       const pageAsNum = Number(page)
       const pageSizeAsNum = Number(pageSize)
       const filtered = playbooks.filter(p => playbookName ? p.playbookName.includes(playbookName) : true)
       const paginated = filtered.slice((pageAsNum - 1) * pageSizeAsNum, pageAsNum * pageSizeAsNum)
-      return { code: 200, message: 'Success', data: { list: paginated, total: filtered.length } }
+      
+      return {
+        code: 200,
+        msg: 'success',
+        data: {
+          pageNum: pageAsNum,
+          pageSize: pageSizeAsNum,
+          size: paginated.length,
+          startRow: (pageAsNum - 1) * pageSizeAsNum + 1,
+          endRow: (pageAsNum - 1) * pageSizeAsNum + paginated.length,
+          pages: Math.ceil(filtered.length / pageSizeAsNum),
+          prePage: pageAsNum > 1 ? pageAsNum - 1 : 0,
+          nextPage: pageAsNum < Math.ceil(filtered.length / pageSizeAsNum) ? pageAsNum + 1 : 0,
+          isFirstPage: pageAsNum === 1,
+          isLastPage: pageAsNum === Math.ceil(filtered.length / pageSizeAsNum),
+          hasPreviousPage: pageAsNum > 1,
+          hasNextPage: pageAsNum < Math.ceil(filtered.length / pageSizeAsNum),
+          navigatePages: 8,
+          navigatepageNums: [pageAsNum],
+          total: filtered.length,
+          list: paginated
+        }
+      }
     },
   },
 
@@ -45,9 +67,17 @@ export default [
     response: ({ params }) => {
       const playbook = playbooks.find(p => p.id === params.id)
       if (!playbook) {
-        return { code: 404, message: 'Not Found', data: null }
+        return { code: 500, msg: '获取预案信息错误', data: null }
       }
-      return { code: 200, message: 'Success', data: playbook }
+      return {
+        code: 200,
+        msg: 'success',
+        data: {
+          playbook,
+          allCommands: mockCommands,
+          allTags: []
+        }
+      }
     },
   },
 
@@ -56,13 +86,17 @@ export default [
     url: '/playbook',
     method: 'post',
     response: ({ body }) => {
-      const newPlaybook = {
-        id: faker.string.uuid(),
-        ...body,
-        createTime: new Date().toISOString().split('T')[0],
+      try {
+        const newPlaybook = {
+          id: faker.string.uuid(),
+          ...body,
+          createTime: new Date().toISOString().split('T')[0],
+        }
+        playbooks.unshift(newPlaybook)
+        return { code: 200, msg: 'success' }
+      } catch (error) {
+        return { code: 500, msg: '保存预案错误' }
       }
-      playbooks.unshift(newPlaybook)
-      return { code: 200, message: 'Created', data: newPlaybook }
     },
   },
 
@@ -71,12 +105,16 @@ export default [
     url: '/playbook/:id',
     method: 'put',
     response: ({ params, body }) => {
-      const index = playbooks.findIndex(p => p.id === params.id)
-      if (index !== -1) {
-        playbooks[index] = { ...playbooks[index], ...body }
-        return { code: 200, message: 'Updated', data: playbooks[index] }
+      try {
+        const index = playbooks.findIndex(p => p.id === params.id)
+        if (index !== -1) {
+          playbooks[index] = { ...playbooks[index], ...body, id: params.id }
+          return { code: 200, msg: 'success' }
+        }
+        return { code: 500, msg: '更新预案错误' }
+      } catch (error) {
+        return { code: 500, msg: '更新预案错误' }
       }
-      return { code: 404, message: 'Not Found', data: null }
     },
   },
 
@@ -85,12 +123,18 @@ export default [
     url: '/playbook/:id',
     method: 'delete',
     response: ({ params }) => {
-      const index = playbooks.findIndex(p => p.id === params.id)
-      if (index !== -1) {
-        playbooks.splice(index, 1)
-        return { code: 200, message: 'Deleted', data: { success: true } }
+      try {
+        const ids = params.id.split(',')
+        ids.forEach(id => {
+          const index = playbooks.findIndex(p => p.id === id)
+          if (index !== -1) {
+            playbooks.splice(index, 1)
+          }
+        })
+        return { code: 200, msg: 'success' }
+      } catch (error) {
+        return { code: 500, msg: '删除预案错误' }
       }
-      return { code: 404, message: 'Not Found', data: null }
     },
   },
 ] as MockMethod[]
