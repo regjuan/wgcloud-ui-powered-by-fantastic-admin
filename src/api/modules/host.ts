@@ -26,3 +26,8 @@ export function getHostDetail(id: string) {
 export function getHostChartData(params: any) {
   return api.get('/dash/chart', { params })
 }
+
+// 更新主机的标签
+export function updateHostTags(data: { id: string; tags: string }) {
+  return api.post('/dash/updateTags', data)
+}

@@ -3,13 +3,16 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { deleteHost, getHostList } from '@/api/modules/host'
+import { getTagList } from '@/api/modules/tag'
 import CommonTable from '@/components/CommonTable/index.vue'
 import RemarkModal from './components/RemarkModal.vue'
+import TagModal from './components/TagModal.vue'
 
 const router = useRouter()
 
 const searchForm = ref({
   hostname: '',
+  tags: [],
 })
 
 const dataList = ref([])
@@ -17,8 +20,10 @@ const dataLoading = ref(false)
 const total = ref(0)
 const page = ref(1)
 const pageSize = ref(10)
+const tagList = ref<any[]>([])
 
 const remarkModalVisible = ref(false)
+const tagModalVisible = ref(false)
 const currentItem = ref(null)
 
 const tableOptions = ref([
@@ -26,9 +31,10 @@ const tableOptions = ref([
   { label: '内存%', prop: 'memPer', width: '100' },
   { label: 'CPU%', prop: 'cpuPer', width: '100' },
   { label: '磁盘%', prop: 'diskPer', width: '100' },
+  { label: '标签', prop: 'tagNameList', width: '200' },
   { label: '更新时间', prop: 'createTime', width: '180' },
   { label: '备注', prop: 'remark' },
-  { label: '操作', prop: 'action', width: '280' },
+  { label: '操作', prop: 'action', width: '320' },
 ])
 
 // 根据数值返回徽章类型
@@ -42,11 +48,22 @@ function getBadgeType(value: number) {
   return 'primary'
 }
 
+async function fetchTags() {
+  try {
+    const res: any = await getTagList({ page: 1, pageSize: 1000 })
+    tagList.value = res.data.list || []
+  }
+  catch (error) {
+    console.error('Failed to load tags', error)
+  }
+}
+
 async function loadData() {
   dataLoading.value = true
   try {
     const params = {
       ...searchForm.value,
+      tags: searchForm.value.tags.join(','),
       account: '',
       page: page.value,
       pageSize: pageSize.value,
@@ -73,6 +90,7 @@ function handleSearch() {
 
 function handleReset() {
   searchForm.value.hostname = ''
+  searchForm.value.tags = []
   page.value = 1
   loadData()
 }
@@ -90,6 +108,11 @@ function handleCurrentChange(val: number) {
 function handleOpenRemarkModal(item: any) {
   currentItem.value = { ...item }
   remarkModalVisible.value = true
+}
+
+function handleOpenTagModal(item: any) {
+  currentItem.value = { ...item }
+  tagModalVisible.value = true
 }
 
 function handleViewDetails(item: any) {
@@ -117,6 +140,7 @@ function handleDelete(item: any) {
 
 onMounted(() => {
   loadData()
+  fetchTags()
 })
 </script>
 
@@ -130,12 +154,30 @@ onMounted(() => {
             <el-form-item label="IP/主机名">
               <FaInput v-model="searchForm.hostname" placeholder="请输入IP或主机名" clearable />
             </el-form-item>
+            <el-form-item label="标签">
+              <el-select
+                v-model="searchForm.tags"
+                multiple
+                collapse-tags
+                collapse-tags-tooltip
+                placeholder="按标签筛选"
+                clearable
+                style="width: 240px"
+              >
+                <el-option
+                  v-for="tag in tagList"
+                  :key="tag.id"
+                  :label="tag.tagName"
+                  :value="tag.id"
+                />
+              </el-select>
+            </el-form-item>
             <el-form-item>
-              <div class="gap-2">
-                <FaButton type="primary" @click="handleSearch">
+              <div class="flex gap-2">
+                <FaButton type="primary" @click.prevent="handleSearch">
                   查询
                 </FaButton>
-                <FaButton @click="handleReset">
+                <FaButton @click.prevent="handleReset">
                   重置
                 </FaButton>
               </div>
@@ -164,8 +206,16 @@ onMounted(() => {
                 {{ row.diskPer }}
               </el-tag>
             </template>
+            <template #tagNameList="{ row }">
+              <el-tag v-for="tag in (row.tagNameList || '').split(',').filter(Boolean)" :key="tag" class="mb-1 mr-1">
+                {{ tag }}
+              </el-tag>
+            </template>
             <template #action="{ row }">
               <div class="flex flex-wrap gap-2">
+                <FaButton type="text" @click="handleOpenTagModal(row)">
+                  标签
+                </FaButton>
                 <FaButton type="text" @click="handleOpenRemarkModal(row)">
                   备注
                 </FaButton>
@@ -194,6 +244,7 @@ onMounted(() => {
       </div>
     </FaPageMain>
     <RemarkModal v-model="remarkModalVisible" :item="currentItem" @success="loadData" />
+    <TagModal v-model="tagModalVisible" :item="currentItem" @success="loadData" />
   </div>
 </template>
 
