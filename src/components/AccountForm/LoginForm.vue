@@ -59,7 +59,7 @@ const onSubmit = form.handleSubmit((values) => {
 
 function testAccount(account: string) {
   form.setFieldValue('account', account)
-  form.setFieldValue('password', '123456')
+  form.setFieldValue('password', '111111')
   onSubmit()
 }
 </script>
@@ -136,9 +136,9 @@ function testAccount(account: string) {
           <FaButton variant="default" size="sm" plain @click="testAccount('admin')">
             admin
           </FaButton>
-          <FaButton variant="outline" size="sm" plain @click="testAccount('test')">
-            test
-          </FaButton>
+<!--          <FaButton variant="outline" size="sm" plain @click="testAccount('test')">-->
+<!--            test-->
+<!--          </FaButton>-->
         </div>
       </div>
     </div>
