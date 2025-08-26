@@ -19,6 +19,7 @@ const playbookForm = ref({
   playbookName: '',
   description: '',
   cronExpression: '',
+  timeoutSeconds: 180,
   isEnabled: 1,
 })
 const playbookRules = {
@@ -59,6 +60,7 @@ async function loadPlaybookData() {
       playbookName,
       playbookDesc,
       cronExpression,
+      timeoutSeconds,
       isEnabled,
       taskStepList: stepsFromApi,
     } = res.data.playbook
@@ -66,6 +68,7 @@ async function loadPlaybookData() {
       playbookName,
       description: playbookDesc,
       cronExpression,
+      timeoutSeconds,
       isEnabled,
     }
     if (stepsFromApi && stepsFromApi.length > 0) {
@@ -160,6 +163,11 @@ onMounted(() => {
             <FaInput
               v-model="playbookForm.cronExpression"
               placeholder="例如: 0 0/5 * * * ?"
+            />
+          </el-form-item>
+          <el-form-item label="超时时间(秒)" prop="timeoutSeconds">
+            <FaInput
+              v-model="playbookForm.timeoutSeconds"
             />
           </el-form-item>
           <el-form-item label="是否启用" prop="isEnabled">

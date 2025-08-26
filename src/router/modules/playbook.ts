@@ -64,6 +64,16 @@ const routes: RouteRecordRaw = {
         menu: false,
       },
     },
+    {
+      path: 'history/details',
+      name: 'PlaybookHistoryDetails',
+      component: () => import('@/views/playbook/details.vue'),
+      meta: {
+        title: '执行详情',
+        activeMenu: '/playbook',
+        menu: false,
+      },
+    },
   ],
 }
 
