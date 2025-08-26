@@ -19,7 +19,7 @@ const form = ref({
   cmdName: '',
   commandType: 'Shell',
   cmdContent: '',
-  timeout: 60,
+  timeout: 180,
 })
 
 const rules = {
@@ -47,7 +47,7 @@ watch(
         cmdName: '',
         commandType: 'Shell',
         cmdContent: '',
-        timeout: 60,
+        timeout: 180,
       }
     }
   },

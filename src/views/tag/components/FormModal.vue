@@ -21,6 +21,9 @@
           placeholder="请输入标签描述"
         />
       </el-form-item>
+      <el-form-item label="日志地址" prop="logPath">
+        <FaInput v-model="form.logPath" placeholder="请输入日志文件绝对路径" />
+      </el-form-item>
       <el-form-item label="标签颜色" prop="tagColor">
         <el-color-picker v-model="form.tagColor" />
       </el-form-item>
@@ -52,12 +55,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'success'])
 
 const formRef = ref<any>(null)
-const form = ref({
-  id: '',
-  tagName: '',
-  tagDesc: '',
-  tagColor: '#409EFF',
-})
+const form = ref<any>({})
 
 const rules = {
   tagName: [{ required: true, message: '请输入标签名称', trigger: 'blur' }],
@@ -81,6 +79,7 @@ watch(
         tagName: '',
         tagDesc: '',
         tagColor: '#409EFF',
+        logPath: '',
       }
     }
   },
