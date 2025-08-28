@@ -81,7 +81,7 @@ api.interceptors.response.use(
       }
 
       else {
-        console.log('Triggering logout. Offending response.data:', response.data)
+        console.warn('Triggering logout. Offending response.data:', response.data)
         useUserStore().requestLogout()
       }
       return Promise.resolve(response.data)

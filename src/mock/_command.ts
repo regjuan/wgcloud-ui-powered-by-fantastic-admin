@@ -76,7 +76,8 @@ export default [
         if (index !== -1) {
           commands[index] = { ...commands[index], ...body }
         }
-      } else {
+      }
+      else {
         // Create
         const newCommand = {
           ...body,

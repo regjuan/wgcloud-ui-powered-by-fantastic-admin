@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getPlaybookHistoryList } from '@/api/modules/playbook'
 import CommonTable from '@/components/CommonTable/index.vue'
@@ -23,7 +23,7 @@ const tableOptions = ref([
   { label: '操作', prop: 'action', width: '120' },
 ])
 
-const statusTagType = (status: string) => {
+function statusTagType(status: string) {
   switch (status) {
     case 'SUCCESS':
       return 'success'
@@ -96,7 +96,7 @@ onMounted(() => {
               <span :class="{ 'text-red-500': row.failedSteps > 0 }">{{ row.failedSteps }}</span>
             </template>
             <template #action="{ row }">
-              <FaButton type="text"  @click="viewDetails(row)">
+              <FaButton type="text" @click="viewDetails(row)">
                 查看详情
               </FaButton>
             </template>

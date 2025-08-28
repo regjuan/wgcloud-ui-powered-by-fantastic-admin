@@ -1,3 +1,81 @@
+<script setup lang="ts">
+import { ElMessage } from 'element-plus'
+import { computed, ref, watch } from 'vue'
+import { saveTag, updateTag } from '@/api/modules/tag'
+
+const props = defineProps({
+  modelValue: Boolean,
+  item: {
+    type: Object,
+    default: () => null,
+  },
+})
+
+const emit = defineEmits(['update:modelValue', 'success'])
+
+const formRef = ref<any>(null)
+const form = ref<any>({})
+
+const rules = {
+  tagName: [{ required: true, message: '请输入标签名称', trigger: 'blur' }],
+}
+
+const visible = computed({
+  get: () => props.modelValue,
+  set: val => emit('update:modelValue', val),
+})
+
+const isEdit = computed(() => !!form.value.id)
+
+watch(
+  () => props.item,
+  (val) => {
+    if (val) {
+      form.value = { ...val }
+    }
+    else {
+      form.value = {
+        id: '',
+        tagName: '',
+        tagDesc: '',
+        tagColor: '#409EFF',
+        logPath: '',
+      }
+    }
+  },
+  { immediate: true, deep: true },
+)
+
+function handleClose() {
+  visible.value = false
+  if (formRef.value) {
+    formRef.value.resetFields()
+  }
+}
+
+function handleSubmit() {
+  formRef.value.validate(async (valid: boolean) => {
+    if (valid) {
+      try {
+        if (isEdit.value) {
+          await updateTag(form.value.id, form.value)
+        }
+        else {
+          await saveTag(form.value)
+        }
+        ElMessage.success(isEdit.value ? '更新成功' : '新增成功')
+        emit('success')
+        handleClose()
+      }
+      catch (error) {
+        // ElMessage.error('操作失败')
+        console.error(error)
+      }
+    }
+  })
+}
+</script>
+
 <template>
   <FaModal
     v-model="visible"
@@ -38,73 +116,3 @@
     </template>
   </FaModal>
 </template>
-
-<script setup lang="ts">
-import { ref, watch, computed } from 'vue'
-import { ElMessage } from 'element-plus'
-import { saveTag } from '@/api/modules/tag'
-
-const props = defineProps({
-  modelValue: Boolean,
-  item: {
-    type: Object,
-    default: () => null,
-  },
-})
-
-const emit = defineEmits(['update:modelValue', 'success'])
-
-const formRef = ref<any>(null)
-const form = ref<any>({})
-
-const rules = {
-  tagName: [{ required: true, message: '请输入标签名称', trigger: 'blur' }],
-}
-
-const visible = computed({
-  get: () => props.modelValue,
-  set: val => emit('update:modelValue', val),
-})
-
-const isEdit = computed(() => !!form.value.id)
-
-watch(
-  () => props.item,
-  (val) => {
-    if (val) {
-      form.value = { ...val }
-    } else {
-      form.value = {
-        id: '',
-        tagName: '',
-        tagDesc: '',
-        tagColor: '#409EFF',
-        logPath: '',
-      }
-    }
-  },
-  { immediate: true, deep: true },
-)
-
-function handleClose() {
-  visible.value = false
-  if (formRef.value) {
-    formRef.value.resetFields()
-  }
-}
-
-function handleSubmit() {
-  formRef.value.validate(async (valid: boolean) => {
-    if (valid) {
-      try {
-        await saveTag(form.value)
-        ElMessage.success(isEdit.value ? '更新成功' : '新增成功')
-        emit('success')
-        handleClose()
-      } catch (error) {
-        // ElMessage.error('操作失败')
-      }
-    }
-  })
-}
-</script>

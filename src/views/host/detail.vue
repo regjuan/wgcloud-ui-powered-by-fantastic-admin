@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import { getHostDetail, getHostChartData } from '@/api/modules/host'
 import { Loading } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
+import { ElMessage } from 'element-plus'
+import { nextTick, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { getHostChartData, getHostDetail } from '@/api/modules/host'
 
 const route = useRoute()
 const hostId = route.params.id as string
@@ -23,10 +23,12 @@ async function loadDetails() {
   try {
     const res: any = await getHostDetail(hostId)
     hostDetails.value = res.data
-  } catch (error) {
+  }
+  catch (error) {
     ElMessage.error('加载主机详情失败')
     console.error('Failed to load host details', error)
-  } finally {
+  }
+  finally {
     detailsLoading.value = false
   }
 }
@@ -36,16 +38,18 @@ async function loadChartData() {
   try {
     const res: any = await getHostChartData({ id: hostId })
     chartData.value = res.data
-  } catch (error) {
+  }
+  catch (error) {
     ElMessage.error('加载图表数据失败')
     console.error('Failed to load chart data', error)
-  } finally {
+  }
+  finally {
     chartsLoading.value = false
   }
 }
 
 function initCharts() {
-  if (!chartData.value) return
+  if (!chartData.value) { return }
 
   // CPU Chart
   if (cpuChartEl.value) {
@@ -115,7 +119,9 @@ onMounted(() => {
     <FaPageHeader :title="`主机详情: ${hostDetails?.systemInfo?.hostname || hostId}`" />
     <FaPageMain class="flex-1 overflow-auto">
       <div v-if="detailsLoading" class="p-10 text-center">
-        <el-icon class="is-loading" size="24"><Loading /></el-icon>
+        <el-icon class="is-loading" size="24">
+          <Loading />
+        </el-icon>
         <p>加载中...</p>
       </div>
       <div v-else-if="!hostDetails" class="p-10 text-center">
@@ -123,20 +129,36 @@ onMounted(() => {
       </div>
       <div v-else class="page-main">
         <div class="info-card">
-          <h3 class="card-title">基本信息</h3>
+          <h3 class="card-title">
+            基本信息
+          </h3>
           <el-descriptions :column="3" border>
-            <el-descriptions-item label="主机名">{{ hostDetails.systemInfo.hostname }}</el-descriptions-item>
-            <el-descriptions-item label="操作系统">{{ hostDetails.systemInfo.osName }}</el-descriptions-item>
-            <el-descriptions-item label="系统架构">{{ hostDetails.systemInfo.cpuArch }}</el-descriptions-item>
-            <el-descriptions-item label="CPU核心数">{{ hostDetails.systemInfo.cpuCore }}</el-descriptions-item>
-            <el-descriptions-item label="总内存">{{ hostDetails.systemInfo.totalMem }} GB</el-descriptions-item>
-            <el-descriptions-item label="上次更新">{{ hostDetails.systemInfo.createTime }}</el-descriptions-item>
+            <el-descriptions-item label="主机名">
+              {{ hostDetails.systemInfo.hostname }}
+            </el-descriptions-item>
+            <el-descriptions-item label="操作系统">
+              {{ hostDetails.systemInfo.osName }}
+            </el-descriptions-item>
+            <el-descriptions-item label="系统架构">
+              {{ hostDetails.systemInfo.cpuArch }}
+            </el-descriptions-item>
+            <el-descriptions-item label="CPU核心数">
+              {{ hostDetails.systemInfo.cpuCore }}
+            </el-descriptions-item>
+            <el-descriptions-item label="总内存">
+              {{ hostDetails.systemInfo.totalMem }} GB
+            </el-descriptions-item>
+            <el-descriptions-item label="上次更新">
+              {{ hostDetails.systemInfo.createTime }}
+            </el-descriptions-item>
           </el-descriptions>
         </div>
 
         <div class="info-card">
-          <h3 class="card-title">磁盘分区</h3>
-          <el-table :data="hostDetails.deskStateList" border stripe>
+          <h3 class="card-title">
+            磁盘分区
+          </h3>
+          <el-table :data="hostDetails.deskStateList" stripe border>
             <el-table-column prop="fileSystem" label="文件系统" />
             <el-table-column prop="size" label="总大小" />
             <el-table-column prop="used" label="已用" />
@@ -151,15 +173,19 @@ onMounted(() => {
         </div>
 
         <div class="info-card">
-          <h3 class="card-title">性能图表</h3>
+          <h3 class="card-title">
+            性能图表
+          </h3>
           <div v-if="chartsLoading" class="p-10 text-center">
-            <el-icon class="is-loading" size="24"><Loading /></el-icon>
+            <el-icon class="is-loading" size="24">
+              <Loading />
+            </el-icon>
             <p>图表数据加载中...</p>
           </div>
           <div v-else class="charts-grid">
-            <div ref="cpuChartEl" class="chart-container"></div>
-            <div ref="memChartEl" class="chart-container"></div>
-            <div ref="netChartEl" class="chart-container"></div>
+            <div ref="cpuChartEl" class="chart-container" />
+            <div ref="memChartEl" class="chart-container" />
+            <div ref="netChartEl" class="chart-container" />
           </div>
         </div>
       </div>
@@ -193,4 +219,3 @@ onMounted(() => {
   height: 300px;
 }
 </style>
-

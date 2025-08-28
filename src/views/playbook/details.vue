@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { ElMessage } from 'element-plus'
+import { groupBy } from 'lodash-es'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getPlaybookHistoryDetails } from '@/api/modules/playbook'
-import { ElMessage } from 'element-plus'
-import { groupBy } from 'lodash-es'
 
 const route = useRoute()
 const router = useRouter()
@@ -21,7 +21,7 @@ const groupedDetails = computed(() => {
   return groupBy(detailsList.value, 'hostname')
 })
 
-const statusTagType = (status: string) => {
+function statusTagType(status: string) {
   switch (status) {
     case 'SUCCESS':
       return 'success'
@@ -69,7 +69,9 @@ onMounted(() => {
     <FaPageHeader :title="`执行详情: ${startTime}`" @back="goBack" />
     <FaPageMain class="flex-1 overflow-auto">
       <div v-if="dataLoading" class="p-10 text-center">
-        <el-icon class="is-loading" size="24"><Loading /></el-icon>
+        <el-icon class="is-loading" size="24">
+          <Loading />
+        </el-icon>
         <p>加载中...</p>
       </div>
       <div v-else-if="!detailsList || detailsList.length === 0" class="p-10 text-center">
@@ -78,7 +80,7 @@ onMounted(() => {
       <div v-else class="page-main">
         <div class="results-card">
           <div v-for="(steps, hostname) in groupedDetails" :key="hostname" class="host-result-group">
-            <h4 class="text-md font-bold p-2 bg-gray-100 dark:bg-gray-800 rounded">
+            <h4 class="text-md rounded bg-gray-100 p-2 font-bold dark:bg-gray-800">
               主机: {{ hostname }}
             </h4>
             <div v-for="(step, stepIndex) in steps" :key="step.id || stepIndex" class="step-item">

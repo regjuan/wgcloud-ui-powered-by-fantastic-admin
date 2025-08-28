@@ -21,7 +21,8 @@ const currentItem = ref(null)
 
 const tableOptions = ref([
   { label: '标签名称', prop: 'tagName' },
-  { label: '标签描述', prop: 'tagDesc' },
+  { label: '标签描述', prop: 'tagDesc', width: '180' },
+  { label: '日志路径', prop: 'logPath' },
   { label: '颜色预览', prop: 'tagColor', width: '100' },
   { label: '创建时间', prop: 'createTime', width: '180' },
   { label: '操作', prop: 'action', width: '180' },

@@ -1,5 +1,5 @@
-import { faker } from '@faker-js/faker'
 import type { MockMethod } from 'vite-plugin-mock'
+import { faker } from '@faker-js/faker'
 
 const mockCommands = Array.from({ length: 10 }).map((_, i) => ({
   id: `cmd-${i + 1}`,
@@ -34,7 +34,7 @@ export default [
       const pageSizeAsNum = Number(pageSize)
       const filtered = playbooks.filter(p => playbookName ? p.playbookName.includes(playbookName) : true)
       const paginated = filtered.slice((pageAsNum - 1) * pageSizeAsNum, pageAsNum * pageSizeAsNum)
-      
+
       return {
         code: 200,
         msg: 'success',
@@ -54,8 +54,8 @@ export default [
           navigatePages: 8,
           navigatepageNums: [pageAsNum],
           total: filtered.length,
-          list: paginated
-        }
+          list: paginated,
+        },
       }
     },
   },
@@ -75,8 +75,8 @@ export default [
         data: {
           playbook,
           allCommands: mockCommands,
-          allTags: []
-        }
+          allTags: [],
+        },
       }
     },
   },
@@ -94,7 +94,8 @@ export default [
         }
         playbooks.unshift(newPlaybook)
         return { code: 200, msg: 'success' }
-      } catch (error) {
+      }
+      catch (error) {
         return { code: 500, msg: '保存预案错误' }
       }
     },
@@ -112,7 +113,8 @@ export default [
           return { code: 200, msg: 'success' }
         }
         return { code: 500, msg: '更新预案错误' }
-      } catch (error) {
+      }
+      catch (error) {
         return { code: 500, msg: '更新预案错误' }
       }
     },
@@ -125,14 +127,15 @@ export default [
     response: ({ params }) => {
       try {
         const ids = params.id.split(',')
-        ids.forEach(id => {
+        ids.forEach((id) => {
           const index = playbooks.findIndex(p => p.id === id)
           if (index !== -1) {
             playbooks.splice(index, 1)
           }
         })
         return { code: 200, msg: 'success' }
-      } catch (error) {
+      }
+      catch (error) {
         return { code: 500, msg: '删除预案错误' }
       }
     },
