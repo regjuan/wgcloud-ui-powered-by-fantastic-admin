@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
-import { ref, watch, computed } from 'vue'
-import { getTagList } from '@/api/modules/tag'
+import { computed, ref, watch } from 'vue'
 import { updateHostTags } from '@/api/modules/host'
+import { getTagList } from '@/api/modules/tag'
 
 const props = defineProps({
   modelValue: {

@@ -10,7 +10,12 @@ export function saveTag(data: any) {
   return api.post('/tag/save', data)
 }
 
+// 更新标签
+export function updateTag(id: string, data: any) {
+  return api.put(`/tag/${id}`, data)
+}
+
 // 删除标签
 export function deleteTag(id: string) {
-  return api.delete(`/tag/del?id=${id}`)
+  return api.delete(`/tag/${id}`)
 }
