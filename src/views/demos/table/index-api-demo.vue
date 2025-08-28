@@ -1,27 +1,11 @@
-<template>
-  <div class="absolute-container">
-    <FaPageHeader title="通用表格 - API请求演示" class="mb-0" />
-    <FaPageMain class="flex-1 overflow-auto" main-class="flex-1 flex flex-col overflow-auto">
-      <CommonTable :list="listData" :options="tableOptions" :loading="loading" height="100%">
-        <template #action="{ row }">
-          <div class="flex gap-2">
-            <FaButton type="text" @click="handleEdit(row)">编辑</FaButton>
-            <FaButton type="text" @click="handleDelete(row)" variant="destructive" >删除</FaButton>
-          </div>
-        </template>
-      </CommonTable>
-    </FaPageMain>
-  </div>
-</template>
-
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { toast } from 'vue-sonner'
-import CommonTable from '@/components/CommonTable/index.vue'
 import tableApi from '@/api/modules/table'
+import CommonTable from '@/components/CommonTable/index.vue'
 
 defineOptions({
-  name: 'mockTableDemo',
+  name: 'MockTableDemo',
 })
 
 const listData = ref([])
@@ -34,10 +18,10 @@ const tableOptions = ref([
     label: '创建日期',
     prop: 'createDate',
     width: '180',
-    formatter: (value) => value ? new Date(value).toLocaleString() : '-'
+    formatter: value => value ? new Date(value).toLocaleString() : '-',
   },
-  { label: '操作', prop: 'action', width: '150' }
-]);
+  { label: '操作', prop: 'action', width: '150' },
+])
 
 async function fetchData() {
   try {
@@ -58,11 +42,11 @@ onMounted(() => {
   fetchData()
 })
 
-const handleEdit = (row) => {
+function handleEdit(row) {
   alert(`正在编辑 [${row.name}]`)
 }
 
-const handleDelete = async (row) => {
+async function handleDelete(row) {
   try {
     const res = await tableApi.delete({ id: row.id })
     toast.success(`删除 [${row.name}] 成功`)
@@ -74,6 +58,26 @@ const handleDelete = async (row) => {
   }
 }
 </script>
+
+<template>
+  <div class="absolute-container">
+    <FaPageHeader title="通用表格 - API请求演示" class="mb-0" />
+    <FaPageMain class="flex-1 overflow-auto" main-class="flex-1 flex flex-col overflow-auto">
+      <CommonTable :list="listData" :options="tableOptions" :loading="loading" height="100%">
+        <template #action="{ row }">
+          <div class="flex gap-2">
+            <FaButton type="text" @click="handleEdit(row)">
+              编辑
+            </FaButton>
+            <FaButton type="text" variant="destructive" @click="handleDelete(row)">
+              删除
+            </FaButton>
+          </div>
+        </template>
+      </CommonTable>
+    </FaPageMain>
+  </div>
+</template>
 
 <style scoped>
 .absolute-container {

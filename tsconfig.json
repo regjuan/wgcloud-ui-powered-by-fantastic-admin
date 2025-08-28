@@ -11,7 +11,7 @@
     { "path": "./tsconfig.node.json" }
   ],
   "files": [],
-    "include": [
+  "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.vue"

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { toTypedSchema } from '@vee-validate/zod'
+import md5 from 'crypto-js/md5'
 import { useForm } from 'vee-validate'
 import * as z from 'zod'
-import md5 from 'crypto-js/md5'
 import { FormControl, FormField, FormItem, FormMessage } from '@/ui/shadcn/ui/form'
 
 defineOptions({
@@ -136,9 +136,9 @@ function testAccount(account: string) {
           <FaButton variant="default" size="sm" plain @click="testAccount('admin')">
             admin
           </FaButton>
-<!--          <FaButton variant="outline" size="sm" plain @click="testAccount('test')">-->
-<!--            test-->
-<!--          </FaButton>-->
+          <!--          <FaButton variant="outline" size="sm" plain @click="testAccount('test')"> -->
+          <!--            test -->
+          <!--          </FaButton> -->
         </div>
       </div>
     </div>

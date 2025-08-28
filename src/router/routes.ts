@@ -5,6 +5,7 @@ import { setupLayouts } from 'virtual:meta-layouts'
 import Command from '@/router/modules/command.ts'
 import Demos from '@/router/modules/demos.ts'
 import Host from '@/router/modules/host.ts'
+import Log from '@/router/modules/log.ts'
 import Playbook from '@/router/modules/playbook.ts'
 import Tag from '@/router/modules/tag.ts'
 import MultilevelMenuExample from './modules/multilevel.menu.example'
@@ -75,7 +76,7 @@ const asyncRoutes: Route.recordMainRaw[] = [
       Command,
       Playbook,
       Host,
-
+      Log,
     ],
   },
 ]

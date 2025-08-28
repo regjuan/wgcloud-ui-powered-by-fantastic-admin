@@ -1,3 +1,59 @@
+<script setup lang="ts">
+import { ElMessage } from 'element-plus'
+import { computed, ref, watch } from 'vue'
+import { saveHostRemark } from '@/api/modules/host'
+
+const props = defineProps({
+  modelValue: Boolean,
+  item: {
+    type: Object,
+    default: () => null,
+  },
+})
+
+const emit = defineEmits(['update:modelValue', 'success'])
+
+const formRef = ref<any>(null)
+const form = ref({
+  id: '',
+  remark: '',
+})
+
+const visible = computed({
+  get: () => props.modelValue,
+  set: val => emit('update:modelValue', val),
+})
+
+watch(
+  () => props.item,
+  (val) => {
+    if (val) {
+      form.value = { id: val.id, remark: val.remark || '' }
+    }
+    else {
+      form.value = { id: '', remark: '' }
+    }
+  },
+  { immediate: true, deep: true },
+)
+
+function handleClose() {
+  visible.value = false
+}
+
+async function handleSubmit() {
+  try {
+    await saveHostRemark(form.value)
+    ElMessage.success('更新成功')
+    emit('success')
+    handleClose()
+  }
+  catch (error) {
+    // Handle error
+  }
+}
+</script>
+
 <template>
   <FaModal
     v-model="visible"
@@ -28,57 +84,3 @@
     </template>
   </FaModal>
 </template>
-
-<script setup lang="ts">
-import { ref, watch, computed } from 'vue'
-import { ElMessage } from 'element-plus'
-import { saveHostRemark } from '@/api/modules/host'
-
-const props = defineProps({
-  modelValue: Boolean,
-  item: {
-    type: Object,
-    default: () => null,
-  },
-})
-
-const emit = defineEmits(['update:modelValue', 'success'])
-
-const formRef = ref<any>(null)
-const form = ref({
-  id: '',
-  remark: '',
-})
-
-const visible = computed({
-  get: () => props.modelValue,
-  set: val => emit('update:modelValue', val),
-})
-
-watch(
-  () => props.item,
-  (val) => {
-    if (val) {
-      form.value = { id: val.id, remark: val.remark || '' }
-    } else {
-      form.value = { id: '', remark: '' }
-    }
-  },
-  { immediate: true, deep: true },
-)
-
-function handleClose() {
-  visible.value = false
-}
-
-async function handleSubmit() {
-  try {
-    await saveHostRemark(form.value)
-    ElMessage.success('更新成功')
-    emit('success')
-    handleClose()
-  } catch (error) {
-    // Handle error
-  }
-}
-</script>
