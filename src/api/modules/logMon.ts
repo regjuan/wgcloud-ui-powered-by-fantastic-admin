@@ -21,6 +21,11 @@ export function deleteLogMon(id: string) {
 }
 
 // 获取主机日志监控状态
-export function getLogMonStatusByHost() {
-  return api.get('/logMon/statusByHost')
+export function getLogMonStatusByHost(params?: any) {
+  return api.get('/logMon/statusByHost', params)
+}
+
+// 获取日志告警明细
+export function getLogMonAlertDetails(params: any) {
+  return api.get('/logMon/alertDetails', params)
 }

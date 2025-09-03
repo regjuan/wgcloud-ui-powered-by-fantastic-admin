@@ -8,6 +8,7 @@ import Host from '@/router/modules/host.ts'
 import Log from '@/router/modules/log.ts'
 import Playbook from '@/router/modules/playbook.ts'
 import Tag from '@/router/modules/tag.ts'
+import Thread from '@/router/modules/thread.ts'
 import MultilevelMenuExample from './modules/multilevel.menu.example'
 
 // 固定路由（默认路由）
@@ -77,6 +78,7 @@ const asyncRoutes: Route.recordMainRaw[] = [
       Playbook,
       Host,
       Log,
+      Thread,
     ],
   },
 ]
