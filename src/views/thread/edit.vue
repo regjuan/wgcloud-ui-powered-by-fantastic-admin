@@ -3,7 +3,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getThreadTask, saveThreadTask } from '@/api/modules/thread'
-import { getHostList } from '@/api/modules/host'
+import { getTagList } from '@/api/modules/tag'
 
 const route = useRoute()
 const router = useRouter()
@@ -12,7 +12,7 @@ const form = reactive({
   id: '',
   taskName: '',
   processKeyword: '',
-  hostId: '',
+  targetTags: [],
   active: '1',
   alertRules: '{"maxTotalThreads": 500}',
 })
@@ -20,12 +20,12 @@ const form = reactive({
 const rules = {
   taskName: [{ required: true, message: '请输入任务名称', trigger: 'blur' }],
   processKeyword: [{ required: true, message: '请输入进程关键字', trigger: 'blur' }],
-  hostId: [{ required: true, message: '请选择主机', trigger: 'change' }],
+  targetTags: [{ required: true, message: '请选择标签', trigger: 'change' }],
 }
 
 const formRef = ref()
 const pageLoading = ref(false)
-const hostOptions = ref([])
+const tagOptions = ref([])
 
 const isEdit = !!route.params.id
 
@@ -34,6 +34,14 @@ async function fetchData() {
   try {
     if (isEdit) {
       const res = await getThreadTask(route.params.id as string)
+      if (res.data.targetTags && typeof res.data.targetTags === 'string') {
+        try {
+          res.data.targetTags = JSON.parse(res.data.targetTags)
+        }
+        catch (e) {
+          res.data.targetTags = []
+        }
+      }
       Object.assign(form, res.data)
     }
   }
@@ -42,15 +50,19 @@ async function fetchData() {
   }
 }
 
-async function fetchHosts() {
-  const res = await getHostList({})
-  hostOptions.value = res.data.list
+async function fetchTags() {
+  const res = await getTagList({ page: 1, pageSize: 1000 })
+  tagOptions.value = res.data.list
 }
 
 async function handleSave() {
   try {
     await formRef.value.validate()
-    await saveThreadTask(form)
+    const dataToSave = {
+      ...form,
+      targetTags: JSON.stringify(form.targetTags),
+    }
+    await saveThreadTask(dataToSave)
     ElMessage.success('保存成功')
     router.push('/thread/list')
   }
@@ -64,7 +76,7 @@ function handleCancel() {
 }
 
 onMounted(() => {
-  fetchHosts()
+  fetchTags()
   if (isEdit) {
     fetchData()
   }
@@ -82,9 +94,15 @@ onMounted(() => {
         <ElFormItem label="进程关键字" prop="processKeyword">
           <ElInput v-model="form.processKeyword" placeholder="例如：my-app.jar, nginx" />
         </ElFormItem>
-        <ElFormItem label="选择主机" prop="hostId">
-          <ElSelect v-model="form.hostId" placeholder="请选择主机">
-            <ElOption v-for="host in hostOptions" :key="host.id" :label="host.hostname" :value="host.id" />
+        <ElFormItem label="选择标签" prop="targetTags">
+          <ElSelect
+            v-model="form.targetTags"
+            placeholder="请选择标签"
+            multiple
+            collapse-tags
+            style="width: 100%;"
+          >
+            <ElOption v-for="tag in tagOptions" :key="tag.id" :label="tag.tagName" :value="tag.tagName" />
           </ElSelect>
         </ElFormItem>
         <ElFormItem label="是否启用">
@@ -97,14 +115,14 @@ onMounted(() => {
             </ElRadioButton>
           </ElRadioGroup>
         </ElFormItem>
-        <ElFormItem label="告警规则" prop="alertRules">
-          <ElInput
-            v-model="form.alertRules"
-            type="textarea"
-            :rows="5"
-            placeholder='请输入JSON格式的告警规则'
-          />
-        </ElFormItem>
+<!--        <ElFormItem label="告警规则" prop="alertRules">-->
+<!--          <ElInput-->
+<!--            v-model="form.alertRules"-->
+<!--            type="textarea"-->
+<!--            :rows="5"-->
+<!--            placeholder='请输入JSON格式的告警规则'-->
+<!--          />-->
+<!--        </ElFormItem>-->
         <ElFormItem>
           <ElButton type="primary" @click="handleSave">
             保存

@@ -7,8 +7,7 @@ export function getThreadList(params: any) {
 
 // 删除线程监控任务
 export function deleteThread(id: string) {
-  const params = { id }
-  return api.post('/threadMon/del', params)
+  return api.delete(`/threadMon/del/${id}`)
 }
 
 // 获取线程监控任务详情
@@ -20,4 +19,9 @@ export function getThreadTask(id: string) {
 // 保存线程监控任务
 export function saveThreadTask(data: any) {
   return api.post('/threadMon/save', data)
+}
+
+// 获取线程监控详情列表
+export function getThreadDetailList(params: any) {
+  return api.get('/threadMon/detail/list', { params })
 }

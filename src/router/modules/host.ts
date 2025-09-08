@@ -10,7 +10,7 @@ const routes: RouteRecordRaw = {
   name: 'host',
   meta: {
     title: '主机管理',
-    icon: 'i-ri:price-tag-3-line',
+    icon: 'ep:monitor',
   },
   children: [
     {

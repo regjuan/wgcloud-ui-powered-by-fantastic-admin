@@ -10,7 +10,7 @@ const routes: RouteRecordRaw = {
   name: 'thread',
   meta: {
     title: '线程监控',
-    icon: 'i-icon-park-outline:thread',
+    icon: 'i-ri:window-line',
   },
   children: [
     {
@@ -19,6 +19,14 @@ const routes: RouteRecordRaw = {
       component: () => import('@/views/thread/list.vue'),
       meta: {
         title: '任务管理',
+      },
+    },
+    {
+      path: 'detail',
+      name: 'threadDetail',
+      component: () => import('@/views/thread/detail.vue'),
+      meta: {
+        title: '监控详情',
       },
     },
     {

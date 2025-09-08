@@ -172,7 +172,7 @@ onMounted(() => {
         border
         row-key="hostname"
       >
-        <!-- Expandable Content -->
+
         <el-table-column type="expand">
           <template #default="{ row }">
             <div class="expanded-content">
@@ -206,7 +206,6 @@ onMounted(() => {
           </template>
         </el-table-column>
 
-        <!-- Main Table Columns -->
         <el-table-column prop="hostname" label="主机名" width="250" />
         <el-table-column prop="tags" label="标签">
           <template #default="{ row }">
@@ -253,6 +252,7 @@ onMounted(() => {
 .expanded-content {
   padding: 16px;
   background-color: var(--el-fill-color-lighter);
+
 }
 
 .expanded-content h4 {

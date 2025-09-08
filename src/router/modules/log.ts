@@ -12,7 +12,7 @@ const routes: RouteRecordRaw
     name: 'Log',
     meta: {
       title: '日志监控',
-      icon: 'ep:monitor',
+      icon: 'ep:document-remove',
     },
     children: [
       {

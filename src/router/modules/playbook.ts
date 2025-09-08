@@ -10,7 +10,7 @@ const routes: RouteRecordRaw = {
   name: 'playbook',
   meta: {
     title: '预案管理',
-    icon: 'i-ri:file-list-3-line',
+    icon: 'ep:notebook',
   },
   children: [
     {

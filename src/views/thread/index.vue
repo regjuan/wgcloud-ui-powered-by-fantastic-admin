@@ -184,17 +184,17 @@ onMounted(() => {
         <ElFormItem label="目标标签" prop="targetTags">
           <ElInput v-model="form.targetTags" />
         </ElFormItem>
-        <ElFormItem label="告警规则" prop="alertRules">
-          <ElInput v-model="form.alertRules" type="textarea" />
-        </ElFormItem>
+<!--        <ElFormItem label="告警规则" prop="alertRules">-->
+<!--          <ElInput v-model="form.alertRules" type="textarea" />-->
+<!--        </ElFormItem>-->
       </ElForm>
       <template #footer>
-        <ElButton @click="dialogFormVisible = false">
+        <FaButton @click="dialogFormVisible = false">
           取消
-        </ElButton>
-        <ElButton type="primary" @click="handleSubmit">
+        </FaButton>
+        <FaButton type="primary" @click="handleSubmit">
           确定
-        </ElButton>
+        </FaButton>
       </template>
     </ElDialog>
     <ElDialog v-model="chartVisible" title="查看图表">

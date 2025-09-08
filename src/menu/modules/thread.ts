@@ -13,6 +13,12 @@ const menu: Menu.recordRaw = {
         title: '任务管理',
       },
     },
+    {
+      path: '/thread/detail',
+      meta: {
+        title: '监控详情',
+      },
+    },
   ],
 }
 
