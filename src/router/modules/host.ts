@@ -25,6 +25,28 @@ const routes: RouteRecordRaw = {
         activeMenu: '/host',
       },
     },
+    {
+      path: 'detail/:hostname',
+      name: 'hostDetail',
+      component: () => import('@/views/host/detail.vue'),
+      meta: {
+        title: '主机详情',
+        menu: false,
+        breadcrumb: true,
+        activeMenu: '/host',
+      },
+    },
+    {
+      path: 'container/:hostId',
+      name: 'hostContainer',
+      component: () => import('@/views/host/container.vue'),
+      meta: {
+        title: '容器列表',
+        menu: false,
+        breadcrumb: true,
+        activeMenu: '/host',
+      },
+    },
   ],
 }
 

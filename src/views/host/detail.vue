@@ -1,193 +1,110 @@
 <script setup lang="ts">
-import { Loading } from '@element-plus/icons-vue'
-import * as echarts from 'echarts'
-import { ElMessage } from 'element-plus'
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { getHostChartData, getHostDetail } from '@/api/modules/host'
+import { getResourceByHostname } from '@/api/modules/host'
 
 const route = useRoute()
-const hostId = route.params.id as string
+const hostname = route.params.hostname as string
 
-const detailsLoading = ref(true)
-const chartsLoading = ref(true)
-const hostDetails = ref<any>(null)
-const chartData = ref<any>(null)
+const loading = ref(false)
+const hostDetail = ref<any>(null)
 
-const cpuChartEl = ref<HTMLElement | null>(null)
-const memChartEl = ref<HTMLElement | null>(null)
-const netChartEl = ref<HTMLElement | null>(null)
+const deskStateColumns = [
+  { prop: 'fileSystem', label: '文件系统' },
+  { prop: 'size', label: '大小' },
+  { prop: 'used', label: '已用' },
+  { prop: 'avail', label: '可用' },
+  { prop: 'usePer', label: '使用率' },
+  { prop: 'createTime', label: '更新时间' },
+]
 
-async function loadDetails() {
-  detailsLoading.value = true
+async function fetchData() {
+  loading.value = true
   try {
-    const res: any = await getHostDetail(hostId)
-    hostDetails.value = res.data
+    const res: any = await getResourceByHostname(hostname)
+    hostDetail.value = res.data
   }
   catch (error) {
-    ElMessage.error('加载主机详情失败')
     console.error('Failed to load host details', error)
   }
   finally {
-    detailsLoading.value = false
+    loading.value = false
   }
 }
-
-async function loadChartData() {
-  chartsLoading.value = true
-  try {
-    const res: any = await getHostChartData({ id: hostId })
-    chartData.value = res.data
-  }
-  catch (error) {
-    ElMessage.error('加载图表数据失败')
-    console.error('Failed to load chart data', error)
-  }
-  finally {
-    chartsLoading.value = false
-  }
-}
-
-function initCharts() {
-  if (!chartData.value) { return }
-
-  // CPU Chart
-  if (cpuChartEl.value) {
-    const cpuChart = echarts.init(cpuChartEl.value)
-    const cpuOption = {
-      tooltip: { trigger: 'axis' },
-      legend: { data: ['用户', '系统', 'IO等待'] },
-      xAxis: { type: 'category', data: chartData.value.cpuStateList.map((d: any) => d.createTime) },
-      yAxis: { type: 'value', name: '使用率 (%)' },
-      series: [
-        { name: '用户', type: 'line', data: chartData.value.cpuStateList.map((d: any) => d.us) },
-        { name: '系统', type: 'line', data: chartData.value.cpuStateList.map((d: any) => d.sy) },
-        { name: 'IO等待', type: 'line', data: chartData.value.cpuStateList.map((d: any) => d.wa) },
-      ],
-    }
-    cpuChart.setOption(cpuOption)
-  }
-
-  // Memory Chart
-  if (memChartEl.value) {
-    const memChart = echarts.init(memChartEl.value)
-    const memOption = {
-      tooltip: { trigger: 'axis' },
-      legend: { data: ['内存使用率'] },
-      xAxis: { type: 'category', data: chartData.value.memStateList.map((d: any) => d.createTime) },
-      yAxis: { type: 'value', name: '使用率 (%)' },
-      series: [
-        { name: '内存使用率', type: 'line', data: chartData.value.memStateList.map((d: any) => d.usePer) },
-      ],
-    }
-    memChart.setOption(memOption)
-  }
-
-  // Network I/O Chart
-  if (netChartEl.value) {
-    const netChart = echarts.init(netChartEl.value)
-    const netOption = {
-      tooltip: { trigger: 'axis' },
-      legend: { data: ['接收', '发送'] },
-      xAxis: { type: 'category', data: chartData.value.netIoStateList.map((d: any) => d.createTime) },
-      yAxis: { type: 'value', name: 'KB/s' },
-      series: [
-        { name: '接收', type: 'line', data: chartData.value.netIoStateList.map((d: any) => (d.rxbyt / 1024).toFixed(2)) },
-        { name: '发送', type: 'line', data: chartData.value.netIoStateList.map((d: any) => (d.txbyt / 1024).toFixed(2)) },
-      ],
-    }
-    netChart.setOption(netOption)
-  }
-}
-
-watch(chartData, (newData) => {
-  if (newData) {
-    nextTick(() => {
-      initCharts()
-    })
-  }
-})
 
 onMounted(() => {
-  loadDetails()
-  loadChartData()
+  fetchData()
 })
 </script>
 
 <template>
   <div class="h-full flex flex-col">
-    <FaPageHeader :title="`主机详情: ${hostDetails?.systemInfo?.hostname || hostId}`" />
+    <FaPageHeader :title="`主机详情: ${hostname}`" />
     <FaPageMain class="flex-1 overflow-auto">
-      <div v-if="detailsLoading" class="p-10 text-center">
-        <el-icon class="is-loading" size="24">
-          <Loading />
-        </el-icon>
-        <p>加载中...</p>
-      </div>
-      <div v-else-if="!hostDetails" class="p-10 text-center">
-        <p>未能加载主机数据。</p>
-      </div>
-      <div v-else class="page-main">
-        <div class="info-card">
-          <h3 class="card-title">
-            基本信息
-          </h3>
-          <el-descriptions :column="3" border>
-            <el-descriptions-item label="主机名">
-              {{ hostDetails.systemInfo.hostname }}
-            </el-descriptions-item>
-            <el-descriptions-item label="操作系统">
-              {{ hostDetails.systemInfo.osName }}
-            </el-descriptions-item>
-            <el-descriptions-item label="系统架构">
-              {{ hostDetails.systemInfo.cpuArch }}
-            </el-descriptions-item>
-            <el-descriptions-item label="CPU核心数">
-              {{ hostDetails.systemInfo.cpuCore }}
-            </el-descriptions-item>
-            <el-descriptions-item label="总内存">
-              {{ hostDetails.systemInfo.totalMem }} GB
-            </el-descriptions-item>
-            <el-descriptions-item label="上次更新">
-              {{ hostDetails.systemInfo.createTime }}
-            </el-descriptions-item>
-          </el-descriptions>
+      <div class="page-main">
+        <div v-if="loading">
+          <el-skeleton :rows="10" animated />
         </div>
+        <div v-if="!loading && hostDetail" class="flex flex-col gap-4">
+          <el-card class="box-card">
+            <template #header>
+              <div class="card-header">
+                <span>CPU状态</span>
+              </div>
+            </template>
+            <el-descriptions :column="2" border>
+              <el-descriptions-item label="用户空间占比">{{ hostDetail.cpuState.user }}%</el-descriptions-item>
+              <el-descriptions-item label="内核空间占比">{{ hostDetail.cpuState.sys }}%</el-descriptions-item>
+              <el-descriptions-item label="空闲">{{ hostDetail.cpuState.idle }}%</el-descriptions-item>
+              <el-descriptions-item label="IO等待">{{ hostDetail.cpuState.iowait }}%</el-descriptions-item>
+              <el-descriptions-item label="硬中断">{{ hostDetail.cpuState.irq }}%</el-descriptions-item>
+              <el-descriptions-item label="软中断">{{ hostDetail.cpuState.soft }}%</el-descriptions-item>
+              <el-descriptions-item label="更新时间">{{ hostDetail.cpuState.createTime }}</el-descriptions-item>
+            </el-descriptions>
+          </el-card>
 
-        <div class="info-card">
-          <h3 class="card-title">
-            磁盘分区
-          </h3>
-          <el-table :data="hostDetails.deskStateList" stripe border>
-            <el-table-column prop="fileSystem" label="文件系统" />
-            <el-table-column prop="size" label="总大小" />
-            <el-table-column prop="used" label="已用" />
-            <el-table-column prop="avail" label="可用" />
-            <el-table-column prop="use" label="使用率">
-              <template #default="{ row }">
-                <el-progress :percentage="parseFloat(row.use.replace('%', ''))" />
-              </template>
-            </el-table-column>
-            <el-table-column prop="mountedOn" label="挂载点" />
-          </el-table>
-        </div>
+          <el-card class="box-card">
+            <template #header>
+              <div class="card-header">
+                <span>内存状态</span>
+              </div>
+            </template>
+            <el-descriptions :column="2" border>
+              <el-descriptions-item label="总内存">{{ hostDetail.memState.total }} MB</el-descriptions-item>
+              <el-descriptions-item label="已用内存">{{ hostDetail.memState.used }} MB</el-descriptions-item>
+              <el-descriptions-item label="剩余内存">{{ hostDetail.memState.free }} MB</el-descriptions-item>
+              <el-descriptions-item label="使用率">{{ hostDetail.memState.usePer }}%</el-descriptions-item>
+              <el-descriptions-item label="更新时间">{{ hostDetail.memState.createTime }}</el-descriptions-item>
+            </el-descriptions>
+          </el-card>
 
-        <div class="info-card">
-          <h3 class="card-title">
-            性能图表
-          </h3>
-          <div v-if="chartsLoading" class="p-10 text-center">
-            <el-icon class="is-loading" size="24">
-              <Loading />
-            </el-icon>
-            <p>图表数据加载中...</p>
-          </div>
-          <div v-else class="charts-grid">
-            <div ref="cpuChartEl" class="chart-container" />
-            <div ref="memChartEl" class="chart-container" />
-            <div ref="netChartEl" class="chart-container" />
-          </div>
+          <el-card class="box-card">
+            <template #header>
+              <div class="card-header">
+                <span>网络IO状态</span>
+              </div>
+            </template>
+            <el-descriptions :column="2" border>
+              <el-descriptions-item label="接收速率 (rxpck/s)">{{ hostDetail.netIoState.rxpck }}</el-descriptions-item>
+              <el-descriptions-item label="发送速率 (txpck/s)">{{ hostDetail.netIoState.txpck }}</el-descriptions-item>
+              <el-descriptions-item label="接收流量 (rxbyt/s)">{{ hostDetail.netIoState.rxbyt }} KB</el-descriptions-item>
+              <el-descriptions-item label="发送流量 (txbyt/s)">{{ hostDetail.netIoState.txbyt }} KB</el-descriptions-item>
+              <el-descriptions-item label="更新时间">{{ hostDetail.netIoState.createTime }}</el-descriptions-item>
+            </el-descriptions>
+          </el-card>
+
+          <el-card class="box-card">
+            <template #header>
+              <div class="card-header">
+                <span>磁盘状态</span>
+              </div>
+            </template>
+            <el-table :data="hostDetail.deskStateList" stripe border>
+              <el-table-column v-for="col in deskStateColumns" :key="col.prop" :prop="col.prop" :label="col.label" />
+            </el-table>
+          </el-card>
         </div>
+        <el-empty v-if="!loading && !hostDetail" description="暂无数据" />
       </div>
     </FaPageMain>
   </div>
@@ -195,27 +112,21 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .page-main {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.info-card {
   padding: 16px;
+}
+.box-card {
   background-color: var(--el-bg-color-overlay);
   border-radius: 8px;
+  border: none;
 }
-.card-title {
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 16px;
+  font-weight: bold;
 }
-.charts-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-.chart-container {
-  width: 100%;
-  height: 300px;
+:deep(.el-card__header) {
+  border-bottom: 1px solid var(--el-border-color-lighter);
 }
 </style>

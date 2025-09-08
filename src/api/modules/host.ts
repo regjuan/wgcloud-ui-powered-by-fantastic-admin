@@ -31,3 +31,9 @@ export function getHostChartData(params: any) {
 export function updateHostTags(data: { id: string, tags: string }) {
   return api.post('/dash/updateTags', data)
 }
+
+// 根据主机名获取资源信息
+export function getResourceByHostname(hostname: string) {
+  const params = { hostname }
+  return api.get('/dash/resourceByHostname', { params })
+}

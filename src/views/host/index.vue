@@ -116,7 +116,15 @@ function handleOpenTagModal(item: any) {
 }
 
 function handleViewDetails(item: any) {
-  router.push(`/host/detail/${item.id}`)
+  router.push(`/host/detail/${item.hostname}`)
+}
+
+function handleViewContainers(item: any) {
+  router.push({
+    name: 'hostContainer',
+    params: { hostId: item.id },
+    query: { hostName: item.hostname },
+  })
 }
 
 function handleViewProcesses(item: any) {
@@ -219,12 +227,15 @@ onMounted(() => {
                 <FaButton type="text" @click="handleOpenRemarkModal(row)">
                   备注
                 </FaButton>
+                <FaButton type="text" @click="handleViewContainers(row)">
+                  容器
+                </FaButton>
                 <FaButton type="text" @click="handleViewDetails(row)">
                   详情
                 </FaButton>
-                <FaButton type="text" @click="handleViewProcesses(row)">
-                  进程
-                </FaButton>
+<!--                <FaButton type="text" @click="handleViewProcesses(row)">-->
+<!--                  进程-->
+<!--                </FaButton>-->
                 <FaButton type="text" variant="destructive" @click="handleDelete(row)">
                   删除
                 </FaButton>
